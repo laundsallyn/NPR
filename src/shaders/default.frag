@@ -5,6 +5,7 @@ in vec4 vertex_normal;
 in vec4 light_direction;
 in vec4 camera_direction;
 in vec2 uv_coords;
+uniform vec4 garlic;
 uniform vec4 diffuse;
 uniform vec4 ambient;
 uniform vec4 specular;
@@ -19,16 +20,11 @@ float rand(vec2 co){
 void main() {
 	vec3 texcolor = texture(textureSampler, uv_coords).xyz;
 	if (length(texcolor) == 0.0) {
-		//vec3 color = vec3(0.0, 1.0, 0.0);
-		//vec3 color = vec3(diffuse);
 		vec3 color = vec3(diffuse);
-		//vec2 randuv = vec2(rand(light_direction.xy), rand(light_direction.zw));
-		//vec3 color = vec3(diffuse) + texture(textureSampler, randuv).xyz;
-		//vec3 color = texture(textureSampler, randuv).xyz;
-		//vec3 color = vec3(diffuse) + vec3(randuv.x, randuv.y, 1.0);
 		float dot_nl = dot(normalize(light_direction), normalize(vertex_normal));
 		dot_nl = clamp(dot_nl, 0.0, 1.0);
-		vec4 spec = specular * pow(max(0.0, dot(reflect(-light_direction, vertex_normal), camera_direction)), shininess);
+		//vec4 spec = specular * pow(max(0.0, dot(reflect(-light_direction, vertex_normal), camera_direction)), shininess);
+		vec4 spec = vec4(0.0);
 		color = clamp(dot_nl * color + vec3(ambient) + vec3(spec), 0.0, 1.0);
 
 
@@ -43,6 +39,6 @@ void main() {
 	if (isEdge) {
 		fragment_color = vec4(0,0,0,1);
 	} */
-	fragment_color = vec4(0.2, 0.2, 0.2, 0.5);
+	fragment_color = garlic;
 }
 )zzz"

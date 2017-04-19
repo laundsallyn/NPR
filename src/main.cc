@@ -143,6 +143,9 @@ int main(int argc, char* argv[])
 
 	// FIXME: add code to create bone and cylinder geometry
 
+
+	glm::vec4 garlicParameter = glm::vec4(0.2,0.3,0.4,0.5);
+
 	Mesh mesh;
 	mesh.loadpmd(argv[1]);
 	std::cout << "Loaded object  with  " << mesh.vertices.size()
@@ -172,6 +175,10 @@ int main(int argc, char* argv[])
 	MatrixPointers mats; // Define MatrixPointers here for lambda to capture
 	
 
+	std::cout<<"size of materials vector: "<<mesh.materials.size()<<std::endl;
+	for(size_t i = 0; i < mesh.materials.size(); ++i){
+		mesh.materials[i].printMaterialSpec();
+	}
 	/*
 	 * In the following we are going to define several lambda functions to bind Uniforms.
 	 * 
@@ -243,6 +250,10 @@ int main(int argc, char* argv[])
 			return &non_transparet;
 	};
 
+	auto garlic_data = [&garlicParameter]() -> const void*{
+		return &garlicParameter[0];
+	};
+
 	// FIXME: add more lambdas for data_source if you want to use RenderPass.
 	//        Otherwise, do whatever you like here
 	ShaderUniform std_model = { "model", matrix_binder, std_model_data };
@@ -256,6 +267,9 @@ int main(int argc, char* argv[])
 	ShaderUniform line_mesh_model = {"model", matrix_binder, bone_model_data};
 	ShaderUniform cylinder_mesh_model = {"model", matrix_binder, cylinder_model_data};
 	ShaderUniform coordinate_mesh_model = {"model", matrix_binder, coordinate_model_data};
+
+	ShaderUniform garlic = {"garlic", vector_binder, garlic_data};
+
 
 	// FIXME: define more ShaderUniforms for RenderPass if you want to use it.
 	//        Otherwise, do whatever you like here
@@ -275,8 +289,8 @@ int main(int argc, char* argv[])
 			  fragment_shader
 			},
 			{ std_model, std_view, std_proj,
-			  std_light,
-			  std_camera, object_alpha },
+			  std_light, garlic,
+			  std_camera, object_alpha},
 			{ "fragment_color" }
 			);
 
