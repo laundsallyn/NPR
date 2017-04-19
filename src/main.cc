@@ -12,7 +12,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-
+#include "glm/ext.hpp" 
 #include <glm/gtx/component_wise.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtx/string_cast.hpp>
@@ -36,6 +36,30 @@ const char* fragment_shader =
 
 const char* floor_fragment_shader =
 #include "shaders/floor.frag"
+;
+
+const char* bones_fragment_shader = 
+#include "shaders/bones.frag"
+;
+
+const char* line_mesh_geometry_shader = 
+#include "shaders/line_mesh.geom"
+;
+
+const char* cylinder_fragment_shader = 
+#include "shaders/cylinder.frag"
+;
+
+const char* coordinate_fragment_shader = 
+#include "shaders/coordinate.frag"
+;
+
+const char* screen_vertex_shader =
+#include "shaders/screen.vert"
+;
+
+const char* screen_fragment_shader =
+#include "shaders/screen.frag"
 ;
 
 // FIXME: Add more shaders here.
@@ -69,8 +93,42 @@ GLFWwindow* init_glefw()
 	return ret;
 }
 
+struct ScreenQuad {
+	ScreenQuad() {
+		// vertices.push_back(glm::vec4(-1.0f,  1.0f, 0.0f, 1.0f));
+		vertices.push_back(glm::vec2(-1.0f,  1.0f));
+		tex_coords.push_back(glm::vec2(0.0f, 1.0f));
+
+		// vertices.push_back(glm::vec4(-1.0f, -1.0f, 0.0f, 0.0f));
+		vertices.push_back(glm::vec2(-1.0f, -1.0f));
+		tex_coords.push_back(glm::vec2(0.0f, 0.0f));
+
+		// vertices.push_back(glm::vec4( 1.0f, -1.0f, 1.0f, 0.0f));
+		vertices.push_back(glm::vec2( 1.0f, -1.0f));
+		tex_coords.push_back(glm::vec2(1.0f, 0.0f));
+
+		// vertices.push_back(glm::vec4(-1.0f,  1.0f, 0.0f, 1.0f));
+		vertices.push_back(glm::vec2(-1.0f,  1.0f));
+		tex_coords.push_back(glm::vec2(0.0f, 1.0f));
+
+		// vertices.push_back(glm::vec4( 1.0f, -1.0f, 1.0f, 0.0f));
+		vertices.push_back(glm::vec2( 1.0f, -1.0f));
+		tex_coords.push_back(glm::vec2(1.0f, 0.0f));
+
+		// vertices.push_back(glm::vec4( 1.0f,  1.0f, 1.0f, 1.0f));
+		vertices.push_back(glm::vec2( 1.0f,  1.0f));
+		tex_coords.push_back(glm::vec2(1.0f, 1.0f));
+
+	};
+	~ScreenQuad() {};
+
+	std::vector<glm::vec2> vertices;
+	std::vector<glm::vec2> tex_coords;
+};
+
 int main(int argc, char* argv[])
 {
+	int last_bone = -1;
 	if (argc < 2) {
 		std::cerr << "Input model file is missing" << std::endl;
 		std::cerr << "Usage: " << argv[0] << " <PMD file>" << std::endl;
@@ -96,6 +154,15 @@ int main(int argc, char* argv[])
 	}
 	mesh_center /= mesh.vertices.size();
 
+	LineMesh line_mesh;
+	// create_default(line_mesh);
+	create_linemesh(line_mesh, mesh.skeleton);
+	create_cylinder(mesh.cylinder, mesh.skeleton, 1);
+	create_coordinate(mesh.coordinate,mesh.skeleton,1);
+
+	// for(int i = 0; i < line_mesh.vertices.size(); ++i){
+	// 	std::cout<<glm::to_string(line_mesh.vertices[i])<<std::endl;
+	// }
 	/*
 	 * GUI object needs the mesh object for bone manipulation.
 	 */
@@ -103,6 +170,8 @@ int main(int argc, char* argv[])
 
 	glm::vec4 light_position = glm::vec4(0.0f, 100.0f, 0.0f, 1.0f);
 	MatrixPointers mats; // Define MatrixPointers here for lambda to capture
+	
+
 	/*
 	 * In the following we are going to define several lambda functions to bind Uniforms.
 	 * 
@@ -110,13 +179,15 @@ int main(int argc, char* argv[])
 	 *      http://en.cppreference.com/w/cpp/language/lambda
 	 *      http://www.stroustrup.com/C++11FAQ.html#lambda
 	 */
+
+
 	auto matrix_binder = [](int loc, const void* data) {
 		glUniformMatrix4fv(loc, 1, GL_FALSE, (const GLfloat*)data);
 	};
-	auto bone_matrix_binder = [&mesh](int loc, const void* data) {
-		auto nelem = mesh.getNumberOfBones();
-		glUniformMatrix4fv(loc, nelem, GL_FALSE, (const GLfloat*)data);
-	};
+	// auto bone_matrix_binder = [&mesh](int loc, const void* data) {
+	// 	auto nelem = mesh.getNumberOfBones();
+	// 	glUniformMatrix4fv(loc, nelem, GL_FALSE, (const GLfloat*)data);
+	// };
 	auto vector_binder = [](int loc, const void* data) {
 		glUniform4fv(loc, 1, (const GLfloat*)data);
 	};
@@ -132,10 +203,25 @@ int main(int argc, char* argv[])
 	auto std_model_data = [&mats]() -> const void* {
 		return mats.model;
 	}; // This returns point to model matrix
+	
+	glm::mat4 bone_model_matrix = glm::mat4(1.0f);
+	auto bone_model_data = [&bone_model_matrix]() -> const void* {
+		return &bone_model_matrix[0][0];
+	}; 
+	glm::mat4 cylinder_model_matrix = glm::mat4(1.0f);
+	auto cylinder_model_data = [&cylinder_model_matrix]() -> const void* {
+		return &cylinder_model_matrix[0][0];
+	}; 
+	glm::mat4 coordinate_model_matrix = glm::mat4(1.0f);
+	auto coordinate_model_data = [&coordinate_model_matrix]() -> const void* {
+		return &coordinate_model_matrix[0][0];
+	}; 
+
 	glm::mat4 floor_model_matrix = glm::mat4(1.0f);
 	auto floor_model_data = [&floor_model_matrix]() -> const void* {
 		return &floor_model_matrix[0][0];
 	}; // This return model matrix for the floor.
+
 	auto std_view_data = [&mats]() -> const void* {
 		return mats.view;
 	};
@@ -156,6 +242,7 @@ int main(int argc, char* argv[])
 		else
 			return &non_transparet;
 	};
+
 	// FIXME: add more lambdas for data_source if you want to use RenderPass.
 	//        Otherwise, do whatever you like here
 	ShaderUniform std_model = { "model", matrix_binder, std_model_data };
@@ -165,6 +252,11 @@ int main(int argc, char* argv[])
 	ShaderUniform std_proj = { "projection", matrix_binder, std_proj_data };
 	ShaderUniform std_light = { "light_position", vector_binder, std_light_data };
 	ShaderUniform object_alpha = { "alpha", float_binder, alpha_data };
+	/*---------------LineMesh------------------------*/
+	ShaderUniform line_mesh_model = {"model", matrix_binder, bone_model_data};
+	ShaderUniform cylinder_mesh_model = {"model", matrix_binder, cylinder_model_data};
+	ShaderUniform coordinate_mesh_model = {"model", matrix_binder, coordinate_model_data};
+
 	// FIXME: define more ShaderUniforms for RenderPass if you want to use it.
 	//        Otherwise, do whatever you like here
 
@@ -190,6 +282,51 @@ int main(int argc, char* argv[])
 
 	// FIXME: Create the RenderPass objects for bones here.
 	//        Otherwise do whatever you like.
+	RenderDataInput bone_pass_input;
+	bone_pass_input.assign(0,"vertex_position", nullptr, line_mesh.vertices.size(),4, GL_FLOAT);
+	bone_pass_input.assign_index(line_mesh.bone_lines.data(), line_mesh.bone_lines.size(),2);
+	RenderPass bone_pass(-1,
+			bone_pass_input,
+			{
+				vertex_shader,
+				line_mesh_geometry_shader,
+				bones_fragment_shader
+			},
+			{ line_mesh_model, std_view, std_proj,
+			  std_light},
+			{ "fragment_color" }
+			);
+
+	RenderDataInput cylinder_pass_input;
+	cylinder_pass_input.assign(0,"vertex_position", nullptr, mesh.cylinder.vertices.size(),4, GL_FLOAT);
+	cylinder_pass_input.assign_index(mesh.cylinder.bone_lines.data(), mesh.cylinder.bone_lines.size(),2);
+	RenderPass cylinder_pass(-1,
+			cylinder_pass_input,
+			{
+				vertex_shader,
+				line_mesh_geometry_shader,
+				cylinder_fragment_shader
+			},
+			{ cylinder_mesh_model, std_view, std_proj,
+			  std_light},
+			{ "fragment_color" }
+			);
+
+	RenderDataInput coordinate_pass_input;
+	coordinate_pass_input.assign(0,"vertex_position", nullptr, mesh.coordinate.vertices.size(),4, GL_FLOAT);
+	coordinate_pass_input.assign(1,"color", mesh.coordinate.color.data(), mesh.coordinate.color.size(),4,GL_FLOAT);
+	coordinate_pass_input.assign_index(mesh.coordinate.bone_lines.data(), mesh.coordinate.bone_lines.size(),2);
+	RenderPass coordinate_pass(-1,
+			coordinate_pass_input,
+			{
+				vertex_shader,
+				line_mesh_geometry_shader,
+				coordinate_fragment_shader
+			},
+			{ coordinate_mesh_model, std_view, std_proj,
+			  std_light},
+			{ "fragment_color" }
+			);
 
 	RenderDataInput floor_pass_input;
 	floor_pass_input.assign(0, "vertex_position", floor_vertices.data(), floor_vertices.size(), 4, GL_FLOAT);
@@ -208,9 +345,72 @@ int main(int argc, char* argv[])
 	bool draw_object = true;
 	bool draw_cylinder = true;
 
+	//screen VAO
+	// ScreenQuad quad;
+	// RenderDataInput screen_quad_input;
+	// screen_quad_input.assign(0, "vertex_position", quad.vertices.data(), quad.vertices.size(), 2, GL_FLOAT);
+	// screen_quad_input.assign(1, "tex_coords", quad.tex_coords.data(), quad.tex_coords.size(), 2, GL_FLOAT);
+	// RenderPass screen_quad_pass(-1,
+	// 	screen_quad_input,
+	// 	{ screen_vertex_shader, screen_fragment_shader },
+	// 	{ /* uniforms */ },
+	// 	{ "color" }
+	// 	);
+	// GLfloat quadVertices[] = {   // Vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+ //        // Positions   // TexCoords
+ //        -1.0f,  1.0f,  0.0f, 1.0f,
+ //        -1.0f, -1.0f,  0.0f, 0.0f,
+ //         1.0f, -1.0f,  1.0f, 0.0f,
+
+ //        -1.0f,  1.0f,  0.0f, 1.0f,
+ //         1.0f, -1.0f,  1.0f, 0.0f,
+ //         1.0f,  1.0f,  1.0f, 1.0f
+ //    };	
+
+	// GLuint quadVAO, quadVBO;
+	// glGenVertexArrays(1, &quadVAO);
+	// glGenBuffers(1, &quadVBO);
+	// glBindVertexArray(quadVAO);
+	// glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+	// glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+	// glEnableVertexAttribArray(0);
+ //    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
+ //    glEnableVertexAttribArray(1);
+ //    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
+ //    glBindVertexArray(0);
+
+	//Framebuffers
+	GLuint fbo;
+	glGenFramebuffers(1, &fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+	GLuint tex_color_buffer;
+	glGenTextures(1, &tex_color_buffer);
+	glBindTexture(GL_TEXTURE_2D, tex_color_buffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, window_width, window_height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	GLuint rbo;
+	glGenRenderbuffers(1, &rbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, window_width, window_height);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+		std::cout << "ERROR WITH FRAMEBUFFER" << std::endl;
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 	while (!glfwWindowShouldClose(window)) {
 		// Setup some basic window stuff.
 		glfwGetFramebufferSize(window, &window_width, &window_height);
+
+		// First pass
+		// glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
 		glViewport(0, 0, window_width, window_height);
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		glEnable(GL_DEPTH_TEST);
@@ -231,7 +431,29 @@ int main(int argc, char* argv[])
 #else
 		draw_cylinder = true;
 #endif
+
 		// FIXME: Draw bones first.
+		if(gui.isTransparent()){
+			create_linemesh(line_mesh, mesh.skeleton);
+			
+			bone_pass.updateVBO(0, line_mesh.vertices.data(), line_mesh.vertices.size());
+			bone_pass.setup();
+			CHECK_GL_ERROR(glDrawElements(GL_LINES, line_mesh.bone_lines.size()*2, GL_UNSIGNED_INT, 0));
+		}
+		if(draw_cylinder ){
+			// std::cout<<"Drawing!!!!!"<<std::endl;
+			create_cylinder(mesh.cylinder, mesh.skeleton, current_bone);
+			create_coordinate(mesh.coordinate,mesh.skeleton,current_bone);
+
+			cylinder_pass.updateVBO(0, mesh.cylinder.vertices.data(), mesh.cylinder.vertices.size());
+			coordinate_pass.updateVBO(0, mesh.coordinate.vertices.data(), mesh.coordinate.vertices.size());
+
+			cylinder_pass.setup();
+			CHECK_GL_ERROR(glDrawElements(GL_LINES, mesh.cylinder.bone_lines.size()*2, GL_UNSIGNED_INT, 0));
+			coordinate_pass.setup();
+			CHECK_GL_ERROR(glDrawElements(GL_LINES, mesh.coordinate.bone_lines.size()*2, GL_UNSIGNED_INT, 0));
+		}
+
 		// Then draw floor.
 		if (draw_floor) {
 			floor_pass.setup();
@@ -262,10 +484,20 @@ int main(int argc, char* argv[])
 				CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, mesh.faces.size() * 3, GL_UNSIGNED_INT, 0));
 #endif
 		}
+		last_bone = current_bone;
+
+		// Second pass
+		// glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		// glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		// glClear(GL_COLOR_BUFFER_BIT);
+
+		// screen_quad_pass.updateVBO(0, )
+
 		// Poll and swap.
 		glfwPollEvents();
 		glfwSwapBuffers(window);
 	}
+	glDeleteFramebuffers(1, &fbo);
 	glfwDestroyWindow(window);
 	glfwTerminate();
 #if 0
@@ -274,3 +506,4 @@ int main(int argc, char* argv[])
 #endif
 	exit(EXIT_SUCCESS);
 }
+
