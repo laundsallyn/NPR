@@ -20,7 +20,7 @@
 #include <debuggl.h>
 
 int window_width = 800, window_height = 600;
-const std::string window_title = "Skinning";
+const std::string window_title = "Non-Photorealistic Rendering";
 
 const char* vertex_shader =
 #include "shaders/default.vert"
@@ -61,8 +61,6 @@ const char* screen_vertex_shader =
 const char* screen_fragment_shader =
 #include "shaders/screen.frag"
 ;
-
-// FIXME: Add more shaders here.
 
 void ErrorCallback(int error, const char* description) {
 	std::cerr << "GLFW Error: " << description << "\n";
@@ -345,39 +343,48 @@ int main(int argc, char* argv[])
 	bool draw_object = true;
 	bool draw_cylinder = true;
 
-	//screen VAO
-	// ScreenQuad quad;
-	// RenderDataInput screen_quad_input;
-	// screen_quad_input.assign(0, "vertex_position", quad.vertices.data(), quad.vertices.size(), 2, GL_FLOAT);
-	// screen_quad_input.assign(1, "tex_coords", quad.tex_coords.data(), quad.tex_coords.size(), 2, GL_FLOAT);
-	// RenderPass screen_quad_pass(-1,
-	// 	screen_quad_input,
-	// 	{ screen_vertex_shader, screen_fragment_shader },
-	// 	{ /* uniforms */ },
-	// 	{ "color" }
-	// 	);
-	// GLfloat quadVertices[] = {   // Vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
- //        // Positions   // TexCoords
- //        -1.0f,  1.0f,  0.0f, 1.0f,
- //        -1.0f, -1.0f,  0.0f, 0.0f,
- //         1.0f, -1.0f,  1.0f, 0.0f,
+	GLfloat quadVertices[] = {   // Vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+        // Positions   // TexCoords
+        -1.0f,  1.0f,  0.0f, 1.0f,
+        -1.0f, -1.0f,  0.0f, 0.0f,
+         1.0f, -1.0f,  1.0f, 0.0f,
 
- //        -1.0f,  1.0f,  0.0f, 1.0f,
- //         1.0f, -1.0f,  1.0f, 0.0f,
- //         1.0f,  1.0f,  1.0f, 1.0f
- //    };	
+        -1.0f,  1.0f,  0.0f, 1.0f,
+         1.0f, -1.0f,  1.0f, 0.0f,
+         1.0f,  1.0f,  1.0f, 1.0f
+    };	
 
-	// GLuint quadVAO, quadVBO;
-	// glGenVertexArrays(1, &quadVAO);
-	// glGenBuffers(1, &quadVBO);
-	// glBindVertexArray(quadVAO);
-	// glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-	// glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-	// glEnableVertexAttribArray(0);
- //    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
- //    glEnableVertexAttribArray(1);
- //    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
- //    glBindVertexArray(0);
+	GLuint quadVAO, quadVBO;
+    glGenVertexArrays(1, &quadVAO);
+    glGenBuffers(1, &quadVBO);
+    glBindVertexArray(quadVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
+    glBindVertexArray(0);
+
+    // setup screen shader program
+    GLuint screen_shader_vert_id = 0;
+    CHECK_GL_ERROR(screen_shader_vert_id = glCreateShader(GL_VERTEX_SHADER));
+    CHECK_GL_ERROR(glShaderSource(screen_shader_vert_id, 1, &screen_vertex_shader, nullptr));
+    glCompileShader(screen_shader_vert_id);
+    CHECK_GL_SHADER_ERROR(screen_shader_vert_id);
+
+    GLuint screen_shader_frag_id = 0;
+    CHECK_GL_ERROR(screen_shader_frag_id = glCreateShader(GL_FRAGMENT_SHADER));
+    CHECK_GL_ERROR(glShaderSource(screen_shader_frag_id, 1, &screen_fragment_shader, nullptr));
+    glCompileShader(screen_shader_frag_id);
+    CHECK_GL_SHADER_ERROR(screen_shader_frag_id);
+
+    GLuint screen_program_id = 0;
+    CHECK_GL_ERROR(screen_program_id = glCreateProgram());
+    CHECK_GL_ERROR(glAttachShader(screen_program_id, screen_shader_vert_id));
+    CHECK_GL_ERROR(glAttachShader(screen_program_id, screen_shader_frag_id));
+    glLinkProgram(screen_program_id);
+    CHECK_GL_PROGRAM_ERROR(screen_program_id);
 
 	//Framebuffers
 	GLuint fbo;
@@ -391,6 +398,7 @@ int main(int argc, char* argv[])
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex_color_buffer, 0);
 
 	GLuint rbo;
 	glGenRenderbuffers(1, &rbo);
@@ -409,7 +417,7 @@ int main(int argc, char* argv[])
 		glfwGetFramebufferSize(window, &window_width, &window_height);
 
 		// First pass
-		// glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
 		glViewport(0, 0, window_width, window_height);
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -487,11 +495,17 @@ int main(int argc, char* argv[])
 		last_bone = current_bone;
 
 		// Second pass
-		// glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		// glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-		// glClear(GL_COLOR_BUFFER_BIT);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+		glDisable(GL_DEPTH_TEST);
 
-		// screen_quad_pass.updateVBO(0, )
+		// screen_quad_pass.setup();
+		glUseProgram(screen_program_id);
+		glBindVertexArray(quadVAO);
+        glBindTexture(GL_TEXTURE_2D, tex_color_buffer);	// Use the color attachment texture as the texture of the quad plane
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindVertexArray(0);
 
 		// Poll and swap.
 		glfwPollEvents();
