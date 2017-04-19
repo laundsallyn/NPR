@@ -43,6 +43,6 @@ void main() {
 	if (isEdge) {
 		fragment_color = vec4(0,0,0,1);
 	} */
-	fragment_color = vec4(0.2, 0.2, 0.2, 0.5);
+	// fragment_color = vec4(0.2, 0.2, 0.2, 0.5);
 }
 )zzz"
