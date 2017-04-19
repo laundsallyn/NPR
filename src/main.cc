@@ -31,7 +31,7 @@ const char* geometry_shader =
 ;
 
 const char* fragment_shader =
-#include "shaders/default.frag"
+#include "shaders/gooch.frag"
 ;
 
 const char* floor_fragment_shader =
@@ -144,7 +144,8 @@ int main(int argc, char* argv[])
 	// FIXME: add code to create bone and cylinder geometry
 
 
-	glm::vec4 garlicParameter = glm::vec4(0.2,0.3,0.4,0.5);
+	glm::vec4 garlicParameter = glm::vec4(0.55,0.3,0.25,0.5);
+	// b, y, alpha, beta
 
 	Mesh mesh;
 	mesh.loadpmd(argv[1]);

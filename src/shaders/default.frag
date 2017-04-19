@@ -20,7 +20,7 @@ float rand(vec2 co){
 void main() {
 	vec3 texcolor = texture(textureSampler, uv_coords).xyz;
 	if (length(texcolor) == 0.0) {
-		vec3 color = vec3(diffuse);
+		/*vec3 color = vec3(diffuse);
 		float dot_nl = dot(normalize(light_direction), normalize(vertex_normal));
 		dot_nl = clamp(dot_nl, 0.0, 1.0);
 		//vec4 spec = specular * pow(max(0.0, dot(reflect(-light_direction, vertex_normal), camera_direction)), shininess);
@@ -29,16 +29,20 @@ void main() {
 
 
 		fragment_color = vec4(color, alpha);
+		*/
+		float dot_nl = dot(normalize(light_direction), normalize(vertex_normal));
+		vec3 kd = vec3(diffuse);
+		vec3 kblue = vec3(0, 0, garlic.x);
+		vec3 kyellow = vec3(garlic.y, garlic.y, 0);
+		vec3 kcool = kblue + garlic.z*kd;
+		vec3 kwarm = kyellow + garlic.w*kd;
+		dot_nl = (1 + dot_nl)/2.0;
+		fragment_color = vec4(dot_nl * kcool + (1-dot_nl) * kwarm, alpha);
+
 	} else {
 		fragment_color = vec4(texcolor.rgb, alpha);
 	}
 
-/*	float luminance = dot(fragment_color, camera_direction);
-	float gradient = fwidth(luminance);
-	bool isEdge = gradient > 0.1;
-	if (isEdge) {
-		fragment_color = vec4(0,0,0,1);
-	} */
-	fragment_color = garlic;
+	//fragment_color = garlic;
 }
 )zzz"
