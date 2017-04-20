@@ -22,13 +22,13 @@ void main()
         vec2(offset,  -offset)  // bottom-right    
     );
 
-    mat3 sobelx = mat3(
+    float sobelx[9] = float[](
     	1, 0, -1,
     	2, 0, -2,
     	1, 0, -1
     );
 
-    mat3 sobely = mat3(
+    float sobely[9] = float[](
     	1, 2, 1,
     	0, 0, 0,
     	-1, -2, -1
@@ -46,19 +46,17 @@ void main()
     vec3 sum1 = vec3(0.0, 0.0, 0.0);
     vec3 sum2 = vec3(0.0, 0.0, 0.0);
 
-    for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            vec3 gx = sobelx[i][j] * grayTex[i*3 + j];
-            vec3 gy = sobely[j][i] * grayTex[i*3 + j];
-            
-            // sum1 += gx;
-            sum2 += gy;
-        }
+    for (int i = 0; i < 9; ++i) {
+        vec3 gx = sobelx[i] * grayTex[i];
+        vec3 gy = sobely[i] * grayTex[i];
+
+        // sum1 += gx;
+        sum1 += gy;
     }
 
-    float gr = sqrt(sum1.r * sum1.r) + (sum2.r * sum2.r);
-    float gg = sqrt(sum1.g * sum1.g) + (sum2.g * sum2.g);
-    float gb = sqrt(sum1.b * sum1.b) + (sum2.b * sum2.b);
+    float gr = sqrt((sum1.r * sum1.r) + (sum2.r * sum2.r));
+    float gg = sqrt((sum1.g * sum1.g) + (sum2.g * sum2.g));
+    float gb = sqrt((sum1.b * sum1.b) + (sum2.b * sum2.b));
 
     color = vec4(gr, gg, gb, 1.0);
 
