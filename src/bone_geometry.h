@@ -136,6 +136,9 @@ struct Mesh {
 	LineMesh cylinder;
 	LineMesh coordinate;
 
+	glm::vec4 garlic_param;
+	// b, y, alpha, beta
+
 	void loadpmd(const std::string& fn);
 	void updateAnimation();
 	int getNumberOfBones() const 

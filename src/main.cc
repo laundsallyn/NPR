@@ -19,8 +19,8 @@
 #include <glm/gtx/io.hpp>
 #include <debuggl.h>
 
-int window_width = 800, window_height = 600;
-const std::string window_title = "Skinning";
+int window_width = 1920, window_height = 1280;
+const std::string window_title = "Non-photorealistic Rendering";
 
 const char* vertex_shader =
 #include "shaders/default.vert"
@@ -144,8 +144,7 @@ int main(int argc, char* argv[])
 	// FIXME: add code to create bone and cylinder geometry
 
 
-	glm::vec4 garlicParameter = glm::vec4(0.55,0.3,0.25,0.5);
-	// b, y, alpha, beta
+
 
 	Mesh mesh;
 	mesh.loadpmd(argv[1]);
@@ -157,6 +156,9 @@ int main(int argc, char* argv[])
 		mesh_center += mesh.vertices[i];
 	}
 	mesh_center /= mesh.vertices.size();
+
+	glm::vec4 garlicParameter = mesh.garlic_param;
+	// b, y, alpha, beta
 
 	LineMesh line_mesh;
 	// create_default(line_mesh);
@@ -360,40 +362,7 @@ int main(int argc, char* argv[])
 	bool draw_object = true;
 	bool draw_cylinder = true;
 
-	//screen VAO
-	// ScreenQuad quad;
-	// RenderDataInput screen_quad_input;
-	// screen_quad_input.assign(0, "vertex_position", quad.vertices.data(), quad.vertices.size(), 2, GL_FLOAT);
-	// screen_quad_input.assign(1, "tex_coords", quad.tex_coords.data(), quad.tex_coords.size(), 2, GL_FLOAT);
-	// RenderPass screen_quad_pass(-1,
-	// 	screen_quad_input,
-	// 	{ screen_vertex_shader, screen_fragment_shader },
-	// 	{ /* uniforms */ },
-	// 	{ "color" }
-	// 	);
-	// GLfloat quadVertices[] = {   // Vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
- //        // Positions   // TexCoords
- //        -1.0f,  1.0f,  0.0f, 1.0f,
- //        -1.0f, -1.0f,  0.0f, 0.0f,
- //         1.0f, -1.0f,  1.0f, 0.0f,
-
- //        -1.0f,  1.0f,  0.0f, 1.0f,
- //         1.0f, -1.0f,  1.0f, 0.0f,
- //         1.0f,  1.0f,  1.0f, 1.0f
- //    };	
-
-	// GLuint quadVAO, quadVBO;
-	// glGenVertexArrays(1, &quadVAO);
-	// glGenBuffers(1, &quadVBO);
-	// glBindVertexArray(quadVAO);
-	// glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-	// glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-	// glEnableVertexAttribArray(0);
- //    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
- //    glEnableVertexAttribArray(1);
- //    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
- //    glBindVertexArray(0);
-
+	
 	//Framebuffers
 	GLuint fbo;
 	glGenFramebuffers(1, &fbo);
@@ -439,7 +408,7 @@ int main(int argc, char* argv[])
 
 		gui.updateMatrices();
 		mats = gui.getMatrixPointers();
-
+		garlicParameter = mesh.garlic_param;
 		int current_bone = gui.getCurrentBone();
 #if 1
 		draw_cylinder = (current_bone != -1 && gui.isTransparent());
