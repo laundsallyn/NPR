@@ -29,36 +29,34 @@ void main()
     );
 
     float sobely[9] = float[](
-    	1, 2, 1,
-    	0, 0, 0,
+    	 1,  2,  1,
+    	 0,  0,  0,
     	-1, -2, -1
     );
 
     vec3 sampleTex[9];
     vec3 grayTex[9];
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 9; ++i) {
     	sampleTex[i] = vec3(texture(screenTexture, TexCoords.st + offsets[i]));
         vec3 gray = sampleTex[i];
         float average = 0.2126 * gray.r + 0.7152 * gray.g + 0.0722 * gray.b;
         grayTex[i] = vec3(average, average, average);
     }
 
-    vec3 sum1 = vec3(0.0, 0.0, 0.0);
-    vec3 sum2 = vec3(0.0, 0.0, 0.0);
+    vec3 x_sum = vec3(0.0, 0.0, 0.0);
+    vec3 y_sum = vec3(0.0, 0.0, 0.0);
 
     for (int i = 0; i < 9; ++i) {
         vec3 gx = sobelx[i] * grayTex[i];
         vec3 gy = sobely[i] * grayTex[i];
 
-        // sum1 += gx;
-        sum1 += gy;
+        x_sum += gx;
+        y_sum += gy;
     }
 
-    float gr = sqrt((sum1.r * sum1.r) + (sum2.r * sum2.r));
-    float gg = sqrt((sum1.g * sum1.g) + (sum2.g * sum2.g));
-    float gb = sqrt((sum1.b * sum1.b) + (sum2.b * sum2.b));
+    vec3 mag = sqrt( pow(x_sum, vec3(2)) + pow(y_sum, vec3(2)) );
 
-    color = vec4(gr, gg, gb, 1.0);
+    color = vec4(mag, 1.0);
 
 
 }
