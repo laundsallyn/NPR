@@ -202,6 +202,19 @@ void GUI::keyCallback(int key, int scancode, int action, int mods)
 		}
 		std::cout<<glm::to_string(mesh_->garlic_param)<<std::endl;
 		
+	} else if (key == GLFW_KEY_1 && action != GLFW_RELEASE) {
+		mesh_->control[0] = 0;
+		mesh_->control[1] = 0;
+		mesh_->control[2] = 0;
+	} else if (key == GLFW_KEY_2 && action != GLFW_RELEASE) {
+		mesh_->control[0] = abs(mesh_->control[0] - 1);
+	} else if (key == GLFW_KEY_3 && action != GLFW_RELEASE) {
+		mesh_->control[1] = abs(mesh_->control[1] - 1);
+		mesh_->control[2] = 0;
+	} else if (key == GLFW_KEY_4 && action != GLFW_RELEASE) {
+		mesh_->control[0] = 1;
+		mesh_->control[1] = 0;
+		mesh_->control[2] = 1;
 	}
 }
 
