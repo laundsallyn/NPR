@@ -338,7 +338,7 @@ int main(int argc, char* argv[])
 	float aspect = 0.0f;
 	std::cout << "center = " << mesh.getCenter() << "\n";
 
-	bool draw_floor = true;
+	bool draw_floor = false;
 	bool draw_skeleton = true;
 	bool draw_object = true;
 	bool draw_cylinder = true;
@@ -354,6 +354,7 @@ int main(int argc, char* argv[])
          1.0f,  1.0f,  1.0f, 1.0f
     };	
 
+    // TODO: @@@@@@@@@@@@@@@@@@@@@@@@@@@@@2
 	GLuint quadVAO, quadVBO;
     glGenVertexArrays(1, &quadVAO);
     glGenBuffers(1, &quadVBO);
@@ -420,7 +421,8 @@ int main(int argc, char* argv[])
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
 		glViewport(0, 0, window_width, window_height);
-		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		//glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		glClearColor(1.0f, 0.65f, 0.257f, 1.0f);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_MULTISAMPLE);
 		glEnable(GL_BLEND);

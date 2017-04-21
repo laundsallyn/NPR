@@ -3,10 +3,11 @@ in vec2 TexCoords;
 out vec4 color;
 
 uniform sampler2D screenTexture;
-const float offset = 1.0 / 300;
+const float offset = 1.0 / 900;
 
 const vec4 outline_color = vec4(0.0, 0.0, 0.0, 1.0);
 const float outline_size = 1.0f;
+const float threshold = 0.999;
 
 void main()
 {
@@ -29,9 +30,9 @@ void main()
     );
 
     float sobely[9] = float[](
-    	 1,  2,  1,
-    	 0,  0,  0,
-    	-1, -2, -1
+         1,  2,  1,
+         0,  0,  0,
+        -1, -2, -1
     );
 
     vec3 sampleTex[9];
@@ -47,8 +48,10 @@ void main()
     vec3 y_sum = vec3(0.0, 0.0, 0.0);
 
     for (int i = 0; i < 9; ++i) {
-        vec3 gx = sobelx[i] * grayTex[i];
-        vec3 gy = sobely[i] * grayTex[i];
+//        vec3 gx = sobelx[i] * grayTex[i];
+//        vec3 gy = sobely[i] * grayTex[i];
+        vec3 gx = sobelx[i] * sampleTex[i];
+        vec3 gy = sobely[i] * sampleTex[i];
 
         x_sum += gx;
         y_sum += gy;
@@ -56,7 +59,19 @@ void main()
 
     vec3 mag = sqrt( pow(x_sum, vec3(2)) + pow(y_sum, vec3(2)) );
 
-    color = vec4(mag, 1.0);
+    float gmag = length(mag);
+
+    color = vec4(vec3(gmag), 1.0);
+    // color = vec4(mag, 1.0);
+
+  
+    bool isEdge = mag.r > threshold || mag.g > threshold || mag.b > threshold;
+    if (isEdge)
+        color = outline_color;
+    else 
+        color = texture(screenTexture, TexCoords);
+
+    
 
 
 }
