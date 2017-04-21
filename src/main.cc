@@ -157,7 +157,7 @@ int main(int argc, char* argv[])
 
 	glm::vec4 garlicParameter = mesh.garlic_param;
 	// b, y, alpha, beta
-
+	glm::vec3 control = mesh.control;
 	LineMesh line_mesh;
 	// create_default(line_mesh);
 	create_linemesh(line_mesh, mesh.skeleton);
@@ -254,7 +254,9 @@ int main(int argc, char* argv[])
 	auto garlic_data = [&garlicParameter]() -> const void*{
 		return &garlicParameter[0];
 	};
-
+	auto control_data = [&control]() -> const void *{
+		return &control[0];
+	};
 	// FIXME: add more lambdas for data_source if you want to use RenderPass.
 	//        Otherwise, do whatever you like here
 	ShaderUniform std_model = { "model", matrix_binder, std_model_data };
@@ -270,7 +272,7 @@ int main(int argc, char* argv[])
 	ShaderUniform coordinate_mesh_model = {"model", matrix_binder, coordinate_model_data};
 
 	ShaderUniform garlic = {"garlic", vector_binder, garlic_data};
-
+	ShaderUniform control_uni = {"control", vector3_binder, control_data};
 
 	// FIXME: define more ShaderUniforms for RenderPass if you want to use it.
 	//        Otherwise, do whatever you like here
@@ -290,7 +292,7 @@ int main(int argc, char* argv[])
 			  fragment_shader
 			},
 			{ std_model, std_view, std_proj,
-			  std_light, garlic,
+			  std_light, garlic, control_uni,
 			  std_camera, object_alpha},
 			{ "fragment_color" }
 			);
@@ -355,7 +357,7 @@ int main(int argc, char* argv[])
 	float aspect = 0.0f;
 	std::cout << "center = " << mesh.getCenter() << "\n";
 
-	bool draw_floor = false;
+	bool draw_floor = true;
 	bool draw_skeleton = true;
 	bool draw_object = true;
 	bool draw_cylinder = true;
@@ -404,6 +406,10 @@ int main(int argc, char* argv[])
     glLinkProgram(screen_program_id);
     CHECK_GL_PROGRAM_ERROR(screen_program_id);
 
+    GLint control_location = 0;
+    CHECK_GL_ERROR(control_location = 
+    	glGetUniformLocation(screen_program_id, "control"));
+
 	//Framebuffers
 	GLuint fbo;
 	glGenFramebuffers(1, &fbo);
@@ -439,7 +445,7 @@ int main(int argc, char* argv[])
 
 		glViewport(0, 0, window_width, window_height);
 		//glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		glClearColor(1.0f, 0.65f, 0.257f, 1.0f);
+		glClearColor(1.f, 1.f, 1.f, 1.0f);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_MULTISAMPLE);
 		glEnable(GL_BLEND);
@@ -452,6 +458,7 @@ int main(int argc, char* argv[])
 		gui.updateMatrices();
 		mats = gui.getMatrixPointers();
 		garlicParameter = mesh.garlic_param;
+		control = mesh.control;
 		int current_bone = gui.getCurrentBone();
 #if 1
 		draw_cylinder = (current_bone != -1 && gui.isTransparent());
@@ -521,6 +528,8 @@ int main(int argc, char* argv[])
 
 		// screen_quad_pass.setup();
 		glUseProgram(screen_program_id);
+		CHECK_GL_ERROR(glUniform3fv(control_location, 1, &control[0]));
+
 		glBindVertexArray(quadVAO);
         glBindTexture(GL_TEXTURE_2D, tex_color_buffer);	// Use the color attachment texture as the texture of the quad plane
         glDrawArrays(GL_TRIANGLES, 0, 6);

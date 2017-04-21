@@ -34,6 +34,7 @@ std::ostream& operator<<(std::ostream& os, const BoundingBox& bounds)
 Mesh::Mesh()
 {
 	garlic_param = glm::vec4(0.4,0.4,0.2,0.6);
+	control = glm::vec3(0,0,0);
 }
 
 Mesh::~Mesh()

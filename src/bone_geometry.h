@@ -136,6 +136,8 @@ struct Mesh {
 	LineMesh cylinder;
 	LineMesh coordinate;
 
+	glm::vec3 control;// outline, gooch, outlineOnly
+
 	glm::vec4 garlic_param;
 	// b, y, alpha, beta
 
