@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <GLFW/glfw3.h>
-
+#include <GL/glut.h>
 class Mesh;
 
 /*
@@ -45,7 +45,7 @@ private:
 	Mesh* mesh_;
 
 	int window_width_, window_height_;
-
+	bool change_garlic_param = false;
 	bool drag_state_ = false;
 	bool fps_mode_ = false;
 	bool pose_changed_ = true;

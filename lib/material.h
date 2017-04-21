@@ -4,6 +4,9 @@
 #include "image.h"
 #include <glm/glm.hpp>
 #include <memory>
+#include <glm/ext.hpp>
+#include <iostream>
+
 
 /*
  * PMD format groups faces according to their materials.
@@ -26,6 +29,16 @@ struct Material {
 
 	size_t offset; // This material applies to faces starting from offset.
 	size_t nfaces; // This material applies to nfaces faces.
+	void printMaterialSpec(){
+		using namespace std;
+		cout<<"__________________________________________________________"<<endl;
+		cout<<"| diffuse = "<<glm::to_string(diffuse)<<"  |"<<endl;
+		cout<<"| ambient = "<<glm::to_string(ambient)<<"  |"<<endl;
+		cout<<"| specular = "<< glm::to_string(specular)<<" |"<<endl;
+		cout<<"| shininess = "<<shininess<<"     			|"<<endl;
+		cout<<"__________________________________________________________"<<endl;
+
+	}
 };
 
 #endif

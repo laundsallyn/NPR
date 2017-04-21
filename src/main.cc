@@ -19,8 +19,8 @@
 #include <glm/gtx/io.hpp>
 #include <debuggl.h>
 
-int window_width = 800, window_height = 600;
-const std::string window_title = "Non-Photorealistic Rendering";
+int window_width = 1920, window_height = 1280;
+const std::string window_title = "Non-photorealistic Rendering";
 
 const char* vertex_shader =
 #include "shaders/default.vert"
@@ -31,7 +31,7 @@ const char* geometry_shader =
 ;
 
 const char* fragment_shader =
-#include "shaders/default.frag"
+#include "shaders/gooch.frag"
 ;
 
 const char* floor_fragment_shader =
@@ -141,6 +141,9 @@ int main(int argc, char* argv[])
 
 	// FIXME: add code to create bone and cylinder geometry
 
+
+
+
 	Mesh mesh;
 	mesh.loadpmd(argv[1]);
 	std::cout << "Loaded object  with  " << mesh.vertices.size()
@@ -151,6 +154,9 @@ int main(int argc, char* argv[])
 		mesh_center += mesh.vertices[i];
 	}
 	mesh_center /= mesh.vertices.size();
+
+	glm::vec4 garlicParameter = mesh.garlic_param;
+	// b, y, alpha, beta
 
 	LineMesh line_mesh;
 	// create_default(line_mesh);
@@ -170,6 +176,10 @@ int main(int argc, char* argv[])
 	MatrixPointers mats; // Define MatrixPointers here for lambda to capture
 	
 
+	std::cout<<"size of materials vector: "<<mesh.materials.size()<<std::endl;
+	for(size_t i = 0; i < mesh.materials.size(); ++i){
+		mesh.materials[i].printMaterialSpec();
+	}
 	/*
 	 * In the following we are going to define several lambda functions to bind Uniforms.
 	 * 
@@ -241,6 +251,10 @@ int main(int argc, char* argv[])
 			return &non_transparet;
 	};
 
+	auto garlic_data = [&garlicParameter]() -> const void*{
+		return &garlicParameter[0];
+	};
+
 	// FIXME: add more lambdas for data_source if you want to use RenderPass.
 	//        Otherwise, do whatever you like here
 	ShaderUniform std_model = { "model", matrix_binder, std_model_data };
@@ -254,6 +268,9 @@ int main(int argc, char* argv[])
 	ShaderUniform line_mesh_model = {"model", matrix_binder, bone_model_data};
 	ShaderUniform cylinder_mesh_model = {"model", matrix_binder, cylinder_model_data};
 	ShaderUniform coordinate_mesh_model = {"model", matrix_binder, coordinate_model_data};
+
+	ShaderUniform garlic = {"garlic", vector_binder, garlic_data};
+
 
 	// FIXME: define more ShaderUniforms for RenderPass if you want to use it.
 	//        Otherwise, do whatever you like here
@@ -273,8 +290,8 @@ int main(int argc, char* argv[])
 			  fragment_shader
 			},
 			{ std_model, std_view, std_proj,
-			  std_light,
-			  std_camera, object_alpha },
+			  std_light, garlic,
+			  std_camera, object_alpha},
 			{ "fragment_color" }
 			);
 
@@ -434,7 +451,7 @@ int main(int argc, char* argv[])
 
 		gui.updateMatrices();
 		mats = gui.getMatrixPointers();
-
+		garlicParameter = mesh.garlic_param;
 		int current_bone = gui.getCurrentBone();
 #if 1
 		draw_cylinder = (current_bone != -1 && gui.isTransparent());

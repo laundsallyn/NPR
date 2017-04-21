@@ -20,16 +20,6 @@ float rand(vec2 co){
 void main() {
 	vec3 texcolor = texture(textureSampler, uv_coords).xyz;
 	if (length(texcolor) == 0.0) {
-		/*vec3 color = vec3(diffuse);
-		float dot_nl = dot(normalize(light_direction), normalize(vertex_normal));
-		dot_nl = clamp(dot_nl, 0.0, 1.0);
-		//vec4 spec = specular * pow(max(0.0, dot(reflect(-light_direction, vertex_normal), camera_direction)), shininess);
-		vec4 spec = vec4(0.0);
-		color = clamp(dot_nl * color + vec3(ambient) + vec3(spec), 0.0, 1.0);
-
-
-		fragment_color = vec4(color, alpha);
-		*/
 		float dot_nl = dot(normalize(light_direction), normalize(vertex_normal));
 		vec3 kd = vec3(diffuse);
 		vec3 kblue = vec3(0, 0, garlic.x);
