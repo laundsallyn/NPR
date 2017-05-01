@@ -20,7 +20,7 @@
 #include <debuggl.h>
 #include <AntTweakBar.h>
 
-int window_width = 1920, window_height = 1280;
+int window_width = 1440, window_height = 960;
 const std::string window_title = "Non-photorealistic Rendering";
 
 const char* vertex_shader =

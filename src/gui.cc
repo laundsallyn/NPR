@@ -194,7 +194,7 @@ void GUI::keyCallback(int key, int scancode, int action, int mods)
 			current_bone_ = 1;
 	} else if (key == GLFW_KEY_T && action != GLFW_RELEASE) {
 		transparent_ = !transparent_;
-	} else if (key == GLFW_KEY_R){
+	} else if (key == GLFW_KEY_R && action != GLFW_RELEASE){
 		// randomize garlic_parameter value
 		for(int i = 0; i < 4; ++i){
 			float r = static_cast<float>(rand())/ static_cast<float> (RAND_MAX);
