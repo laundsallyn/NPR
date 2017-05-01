@@ -18,6 +18,7 @@
 #include <glm/gtx/string_cast.hpp>
 #include <glm/gtx/io.hpp>
 #include <debuggl.h>
+#include <AntTweakBar.h>
 
 int window_width = 1920, window_height = 1280;
 const std::string window_title = "Non-photorealistic Rendering";
@@ -91,6 +92,20 @@ GLFWwindow* init_glefw()
 	return ret;
 }
 
+TwBar* init_tweakbar() {
+	TwInit(TW_OPENGL_CORE, NULL);
+	TwWindowSize(window_width, window_height);
+
+	TwBar *myBar;
+	myBar = TwNewBar("NameOfTweakBar");
+
+	//example of adding variables to bar
+	char c;
+	TwAddVarRW(myBar, "NameOfMyVariable", TW_TYPE_CHAR, &c, "");
+
+	return myBar;
+}
+
 struct ScreenQuad {
 	ScreenQuad() {
 		// vertices.push_back(glm::vec4(-1.0f,  1.0f, 0.0f, 1.0f));
@@ -134,6 +149,7 @@ int main(int argc, char* argv[])
 	}
 	GLFWwindow *window = init_glefw();
 	GUI gui(window);
+	init_tweakbar();
 
 	std::vector<glm::vec4> floor_vertices;
 	std::vector<glm::uvec3> floor_faces;
@@ -374,9 +390,15 @@ int main(int argc, char* argv[])
     };	
 
     // TODO: @@@@@@@@@@@@@@@@@@@@@@@@@@@@@2
+    // RenderDataInput screen_passinput;
+    // //              (position, name, *data, size of elements, length, type)
+    // screen_input.assign(0, "", nullptr, 0, 0, 0);
+    // screen_input.assign(1, "", nullptr, 0, 0, 0);
+    // RenderPass screen_pass;
+
 	GLuint quadVAO, quadVBO;
-    glGenVertexArrays(1, &quadVAO);
-    glGenBuffers(1, &quadVBO);
+    glGenVertexArrays(1, &quadVAO); // 44
+    glGenBuffers(1, &quadVBO);      // 63
     glBindVertexArray(quadVAO);
     glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
@@ -534,11 +556,13 @@ int main(int argc, char* argv[])
         glBindTexture(GL_TEXTURE_2D, tex_color_buffer);	// Use the color attachment texture as the texture of the quad plane
         glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0);
+        TwDraw();
 
 		// Poll and swap.
 		glfwPollEvents();
 		glfwSwapBuffers(window);
 	}
+	TwTerminate();
 	glDeleteFramebuffers(1, &fbo);
 	glfwDestroyWindow(window);
 	glfwTerminate();
