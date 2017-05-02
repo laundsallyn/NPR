@@ -92,19 +92,6 @@ GLFWwindow* init_glefw()
 	return ret;
 }
 
-TwBar* init_tweakbar() {
-	TwInit(TW_OPENGL_CORE, NULL);
-	TwWindowSize(window_width, window_height);
-
-	TwBar *myBar;
-	myBar = TwNewBar("NameOfTweakBar");
-
-	//example of adding variables to bar
-	char c;
-	TwAddVarRW(myBar, "NameOfMyVariable", TW_TYPE_CHAR, &c, "");
-
-	return myBar;
-}
 
 struct ScreenQuad {
 	ScreenQuad() {
@@ -149,8 +136,7 @@ int main(int argc, char* argv[])
 	}
 	GLFWwindow *window = init_glefw();
 	GUI gui(window);
-	init_tweakbar();
-
+	TwBar* tBar = gui.getTweakBar();
 	std::vector<glm::vec4> floor_vertices;
 	std::vector<glm::uvec3> floor_faces;
 	create_floor(floor_vertices, floor_faces);
@@ -191,6 +177,12 @@ int main(int argc, char* argv[])
 	glm::vec4 light_position = glm::vec4(0.0f, 100.0f, 0.0f, 1.0f);
 	MatrixPointers mats; // Define MatrixPointers here for lambda to capture
 	
+	//example of adding variables to bar
+	TwAddVarRW(tBar, "blue", TW_TYPE_FLOAT, &garlicParameter[0], "");
+	TwAddVarRW(tBar, "yellow", TW_TYPE_FLOAT, &garlicParameter[1], "");
+	TwAddVarRW(tBar, "alpha", TW_TYPE_FLOAT, &garlicParameter[2], "");
+	TwAddVarRW(tBar, "beta", TW_TYPE_FLOAT, &garlicParameter[3], "");
+
 
 	std::cout<<"size of materials vector: "<<mesh.materials.size()<<std::endl;
 	for(size_t i = 0; i < mesh.materials.size(); ++i){

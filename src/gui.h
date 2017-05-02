@@ -5,6 +5,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <GLFW/glfw3.h>
 #include <GL/glut.h>
+#include <AntTweakBar.h>
+
 class Mesh;
 
 /*
@@ -19,7 +21,9 @@ public:
 	GUI(GLFWwindow*);
 	~GUI();
 	void assignMesh(Mesh*);
-
+	TwBar* getTweakBar(){
+		return tBar_;
+	}
 	void keyCallback(int key, int scancode, int action, int mods);
 	void mousePosCallback(double mouse_x, double mouse_y);
 	void mouseButtonCallback(int button, int action, int mods);
@@ -43,7 +47,7 @@ public:
 private:
 	GLFWwindow* window_;
 	Mesh* mesh_;
-
+	TwBar* tBar_;
 	int window_width_, window_height_;
 	bool change_garlic_param = false;
 	bool drag_state_ = false;

@@ -10,6 +10,7 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/ext.hpp>
 
+
 namespace {
 	bool intersectBody(const glm::vec3& origin, const glm::vec3& direction,
 		float radius, float height, float* t) {
@@ -135,6 +136,9 @@ GUI::GUI(GLFWwindow* window)
 	glfwGetWindowSize(window_, &window_width_, &window_height_);
 	float aspect_ = static_cast<float>(window_width_) / window_height_;
 	projection_matrix_ = glm::perspective((float)(kFov * (M_PI / 180.0f)), aspect_, kNear, kFar);
+	TwInit(TW_OPENGL_CORE, NULL);
+	TwWindowSize(window_width_, window_height_);
+	tBar_ = TwNewBar("NameOfTweakBar");
 }
 
 GUI::~GUI()
