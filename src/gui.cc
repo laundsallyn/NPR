@@ -145,6 +145,14 @@ GUI::~GUI()
 {
 }
 
+
+void TW_CALL showOutline(void *gui){
+	GUI* g = static_cast<GUI*>(gui);
+	if(g->getControl(0) < 0.5)
+		g->setControl(0,1.0);
+	else
+		g->setControl(0,0.0);
+}
 void GUI::assignMesh(Mesh* mesh)
 {
 	mesh_ = mesh;
@@ -160,7 +168,7 @@ void GUI::assignMesh(Mesh* mesh)
 	// TwAddButton(tBar_, "comment1", NULL, NULL, " label='Life is like a box a chocolates' ");
 
 	TwDefine("Main/Outline label='Outline'");
-	TwAddButton(tBar_, "showOutline", NULL, NULL, " label='Show Outline' group='Outline' ");
+	TwAddButton(tBar_, "showOutline", showOutline, this, " label='Show Outline' group='Outline' ");
 	
 
 }

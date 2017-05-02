@@ -6,8 +6,7 @@
 #include <GLFW/glfw3.h>
 #include <GL/glut.h>
 #include <AntTweakBar.h>
-
-class Mesh;
+#include "bone_geometry.h"
 
 /*
  * Hint: call glUniformMatrix4fv on thest pointers
@@ -44,6 +43,12 @@ public:
 	bool setCurrentBone(int i);
 
 	bool isTransparent() const { return transparent_; }
+	void setControl(int index, float f){
+		mesh_->control[index] = f;
+	}
+	float getControl(int index){
+		return mesh_->control[index];
+	}
 private:
 	GLFWwindow* window_;
 	Mesh* mesh_;
