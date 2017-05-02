@@ -159,9 +159,16 @@ void GUI::assignMesh(Mesh* mesh)
 	TwAddVarRW(tBar_, "beta", TW_TYPE_FLOAT, &(mesh->garlic_param[3]), "min=0.0 max=1.0 step=0.01 group='Shading Parameters' ");
 	// TwAddButton(tBar_, "comment1", NULL, NULL, " label='Life is like a box a chocolates' ");
 
+	glm::vec3 test(0,0,0);
+	unsigned int test_two = 900;
 	TwDefine("Main/Outline label='Outline'");
 	TwAddButton(tBar_, "showOutline", NULL, NULL, " label='Show Outline' group='Outline' ");
-	
+	TwAddVarRW(tBar_, "OutlineColor", TW_TYPE_COLOR3F, &test[0], " group='Outline' ");
+	TwAddVarRW(tBar_, "OutlineSize", TW_TYPE_UINT32, &test_two, " group='Outline' ");
+	// std::cout << glm::to_string(test) << std::endl;
+
+	glm::vec3 test_three(1,1,1);
+	TwAddVarRW(tBar_, "BGColor", TW_TYPE_COLOR3F, &test_three[0], " label='Background Color' ");
 
 }
 
