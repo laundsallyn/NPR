@@ -177,12 +177,7 @@ int main(int argc, char* argv[])
 	glm::vec4 light_position = glm::vec4(0.0f, 100.0f, 0.0f, 1.0f);
 	MatrixPointers mats; // Define MatrixPointers here for lambda to capture
 	
-	//example of adding variables to bar
-	TwAddVarRW(tBar, "blue", TW_TYPE_FLOAT, &garlicParameter[0], "");
-	TwAddVarRW(tBar, "yellow", TW_TYPE_FLOAT, &garlicParameter[1], "");
-	TwAddVarRW(tBar, "alpha", TW_TYPE_FLOAT, &garlicParameter[2], "");
-	TwAddVarRW(tBar, "beta", TW_TYPE_FLOAT, &garlicParameter[3], "");
-
+	
 
 	std::cout<<"size of materials vector: "<<mesh.materials.size()<<std::endl;
 	for(size_t i = 0; i < mesh.materials.size(); ++i){

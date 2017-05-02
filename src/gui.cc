@@ -149,6 +149,12 @@ void GUI::assignMesh(Mesh* mesh)
 {
 	mesh_ = mesh;
 	center_ = mesh_->getCenter();
+	//example of adding variables to bar
+	TwAddVarRW(tBar_, "blue", TW_TYPE_FLOAT, &(mesh->garlic_param[0]), "min=0.0 max=1.0 step=0.05");
+	TwAddVarRW(tBar_, "yellow", TW_TYPE_FLOAT, &(mesh->garlic_param[1]), "min=0.0 max=1.0 step=0.05");
+	TwAddVarRW(tBar_, "alpha", TW_TYPE_FLOAT, &(mesh->garlic_param[2]), "min=0.0 max=1.0 step=0.05");
+	TwAddVarRW(tBar_, "beta", TW_TYPE_FLOAT, &(mesh->garlic_param[3]), "min=0.0 max=1.0 step=0.05");
+
 }
 
 void GUI::keyCallback(int key, int scancode, int action, int mods)
@@ -224,6 +230,10 @@ void GUI::keyCallback(int key, int scancode, int action, int mods)
 
 void GUI::mousePosCallback(double mouse_x, double mouse_y)
 {
+	if( !TwEventMousePosGLFW(mouse_x, mouse_y) ){
+
+	}  // send event to AntTweakBar
+
 	last_x_ = current_x_;
 	last_y_ = current_y_;
 	current_x_ = mouse_x;
@@ -310,6 +320,10 @@ void GUI::mousePosCallback(double mouse_x, double mouse_y)
 
 void GUI::mouseButtonCallback(int button, int action, int mods)
 {
+	if( !TwEventMouseButtonGLFW(button, action) ){
+
+	}   // Send event to AntTweakBar
+
 	drag_state_ = (action == GLFW_PRESS);
 	current_button_ = button;
 }
