@@ -152,11 +152,15 @@ void GUI::assignMesh(Mesh* mesh)
 
 	// Free vars of NPR shading
 	TwDefine("Main/NPRColor label='Shading Parameters'");
+	TwAddButton(tBar_, "showNPR", NULL, NULL, " label='Show NPR Shading' group='Shading Parameters' ");
 	TwAddVarRW(tBar_, "blue", TW_TYPE_FLOAT, &(mesh->garlic_param[0]), "min=0.0 max=1.0 step=0.01 group='Shading Parameters' ");
 	TwAddVarRW(tBar_, "yellow", TW_TYPE_FLOAT, &(mesh->garlic_param[1]), "min=0.0 max=1.0 step=0.01 group='Shading Parameters' ");
 	TwAddVarRW(tBar_, "alpha", TW_TYPE_FLOAT, &(mesh->garlic_param[2]), "min=0.0 max=1.0 step=0.01 group='Shading Parameters' ");
 	TwAddVarRW(tBar_, "beta", TW_TYPE_FLOAT, &(mesh->garlic_param[3]), "min=0.0 max=1.0 step=0.01 group='Shading Parameters' ");
 	// TwAddButton(tBar_, "comment1", NULL, NULL, " label='Life is like a box a chocolates' ");
+
+	TwDefine("Main/Outline label='Outline'");
+	TwAddButton(tBar_, "showOutline", NULL, NULL, " label='Show Outline' group='Outline' ");
 	
 
 }
