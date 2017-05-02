@@ -138,7 +138,7 @@ GUI::GUI(GLFWwindow* window)
 	projection_matrix_ = glm::perspective((float)(kFov * (M_PI / 180.0f)), aspect_, kNear, kFar);
 	TwInit(TW_OPENGL_CORE, NULL);
 	TwWindowSize(window_width_, window_height_);
-	tBar_ = TwNewBar("NameOfTweakBar");
+	tBar_ = TwNewBar("Main");
 }
 
 GUI::~GUI()
@@ -149,11 +149,15 @@ void GUI::assignMesh(Mesh* mesh)
 {
 	mesh_ = mesh;
 	center_ = mesh_->getCenter();
-	//example of adding variables to bar
-	TwAddVarRW(tBar_, "blue", TW_TYPE_FLOAT, &(mesh->garlic_param[0]), "min=0.0 max=1.0 step=0.05");
-	TwAddVarRW(tBar_, "yellow", TW_TYPE_FLOAT, &(mesh->garlic_param[1]), "min=0.0 max=1.0 step=0.05");
-	TwAddVarRW(tBar_, "alpha", TW_TYPE_FLOAT, &(mesh->garlic_param[2]), "min=0.0 max=1.0 step=0.05");
-	TwAddVarRW(tBar_, "beta", TW_TYPE_FLOAT, &(mesh->garlic_param[3]), "min=0.0 max=1.0 step=0.05");
+
+	// Free vars of NPR shading
+	TwDefine("Main/NPRColor label='Shading Parameters'");
+	TwAddVarRW(tBar_, "blue", TW_TYPE_FLOAT, &(mesh->garlic_param[0]), "min=0.0 max=1.0 step=0.01 group='Shading Parameters' ");
+	TwAddVarRW(tBar_, "yellow", TW_TYPE_FLOAT, &(mesh->garlic_param[1]), "min=0.0 max=1.0 step=0.01 group='Shading Parameters' ");
+	TwAddVarRW(tBar_, "alpha", TW_TYPE_FLOAT, &(mesh->garlic_param[2]), "min=0.0 max=1.0 step=0.01 group='Shading Parameters' ");
+	TwAddVarRW(tBar_, "beta", TW_TYPE_FLOAT, &(mesh->garlic_param[3]), "min=0.0 max=1.0 step=0.01 group='Shading Parameters' ");
+	// TwAddButton(tBar_, "comment1", NULL, NULL, " label='Life is like a box a chocolates' ");
+	
 
 }
 
