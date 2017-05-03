@@ -51,6 +51,8 @@ public:
 	}
 	bool isOutlineShow() { return show_outline; }
 	bool isNPRcolor() { return show_npr_color; }
+	float getBGColor(int index) { return bg_color[index]; }
+	glm::vec3 getOutlineColor() { return outline_color; }
 private:
 	GLFWwindow* window_;
 	Mesh* mesh_;
@@ -59,6 +61,9 @@ private:
 	bool change_garlic_param = false;
 	bool show_outline = false;
 	bool show_npr_color = false;
+	glm::vec3 bg_color;
+	glm::vec3 outline_color;
+	unsigned int outline_size = 900;
 	bool drag_state_ = false;
 	bool fps_mode_ = false;
 	bool pose_changed_ = true;

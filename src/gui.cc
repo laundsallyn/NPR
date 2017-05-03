@@ -168,16 +168,14 @@ void GUI::assignMesh(Mesh* mesh)
 	TwAddVarRW(tBar_, "beta", TW_TYPE_FLOAT, &(mesh->garlic_param[3]), "min=0.0 max=1.0 step=0.01 group='Shading Parameters' ");
 	TwAddButton(tBar_, "defaultValues", NULL, NULL, " label='Default Values' group='Shading Parameters' ");
 
-	glm::vec3 test(0,0,0);
-	unsigned int test_two = 900;
+	bg_color = glm::vec3(1.0f, 1.0f, 1.0f);
+	outline_color = glm::vec3(0.0f, 0.0f, 0.0f);
 	TwDefine("Main/Outline label='Outline'");
 	// TwAddButton(tBar_, "showOutline", showOutline, this, " label='Show Outline' group='Outline' ");
-	TwAddVarRW(tBar_, "showOutline2", TW_TYPE_BOOLCPP, &show_outline, " label='Show outline 2' group='Outline' ");
-	TwAddVarRW(tBar_, "OutlineColor", TW_TYPE_COLOR3F, &test[0], " group='Outline' ");
-	TwAddVarRW(tBar_, "OutlineSize", TW_TYPE_UINT32, &test_two, " group='Outline' ");
-	// std::cout << glm::to_string(test) << std::endl;
-	glm::vec3 test_three(1,1,1);
-	TwAddVarRW(tBar_, "BGColor", TW_TYPE_COLOR3F, &test_three[0], " label='Background Color' ");
+	TwAddVarRW(tBar_, "showOutline", TW_TYPE_BOOLCPP, &show_outline, " label='Show outline' group='Outline' ");
+	TwAddVarRW(tBar_, "BGColor", TW_TYPE_COLOR3F, &(bg_color[0]), " label='Background Color' group='Outline' min=0.0 max=1.0 step=0.01");
+	TwAddVarRW(tBar_, "OutlineSize", TW_TYPE_UINT32, &outline_size, " group='Outline' min=1 max=1000 step=1");
+	TwAddVarRW(tBar_, "OutlineColor", TW_TYPE_COLOR3F, &(outline_color[0]), "label='Outline Color' group='Outline' min=0.0 max=1.0 step=0.01 ");
 }
 
 void GUI::keyCallback(int key, int scancode, int action, int mods)
@@ -235,19 +233,6 @@ void GUI::keyCallback(int key, int scancode, int action, int mods)
 		}
 		std::cout<<glm::to_string(mesh_->garlic_param)<<std::endl;
 		
-	} else if (key == GLFW_KEY_1 && action != GLFW_RELEASE) {
-		mesh_->control[0] = 0;
-		mesh_->control[1] = 0;
-		mesh_->control[2] = 0;
-	} else if (key == GLFW_KEY_2 && action != GLFW_RELEASE) {
-		mesh_->control[0] = abs(mesh_->control[0] - 1);
-	} else if (key == GLFW_KEY_3 && action != GLFW_RELEASE) {
-		mesh_->control[1] = abs(mesh_->control[1] - 1);
-		mesh_->control[2] = 0;
-	} else if (key == GLFW_KEY_4 && action != GLFW_RELEASE) {
-		mesh_->control[0] = 1;
-		mesh_->control[1] = 0;
-		mesh_->control[2] = 1;
 	}
 }
 

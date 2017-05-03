@@ -419,6 +419,10 @@ int main(int argc, char* argv[])
     CHECK_GL_ERROR(control_location = 
     	glGetUniformLocation(screen_program_id, "control"));
 
+    GLint outline_color_location = 0;
+    CHECK_GL_ERROR(outline_color_location = 
+    	glGetUniformLocation(screen_program_id, "outline_color"));
+
 	//Framebuffers
 	GLuint fbo;
 	glGenFramebuffers(1, &fbo);
@@ -454,7 +458,8 @@ int main(int argc, char* argv[])
 
 		glViewport(0, 0, window_width, window_height);
 		//glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		glClearColor(1.f, 1.f, 1.f, 1.0f);
+
+		glClearColor(gui.getBGColor(0), gui.getBGColor(1), gui.getBGColor(2), 1.0f);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_MULTISAMPLE);
 		glEnable(GL_BLEND);
@@ -531,6 +536,7 @@ int main(int argc, char* argv[])
 
 		gui.setControl(0, ((gui.isOutlineShow()) ? 1.0 : 0.0));
 		gui.setControl(1, ((gui.isNPRcolor()) ? 1.0 : 0.0));
+		glm::vec3 oc = gui.getOutlineColor();
 
 		// Second pass
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -541,6 +547,7 @@ int main(int argc, char* argv[])
 		// screen_quad_pass.setup();
 		glUseProgram(screen_program_id);
 		CHECK_GL_ERROR(glUniform3fv(control_location, 1, &control[0]));
+		CHECK_GL_ERROR(glUniform3fv(outline_color_location, 1, &oc[0]));
 
 		glBindVertexArray(quadVAO);
         glBindTexture(GL_TEXTURE_2D, tex_color_buffer);	// Use the color attachment texture as the texture of the quad plane
