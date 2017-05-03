@@ -146,13 +146,20 @@ GUI::~GUI()
 }
 
 
-void TW_CALL showOutline(void *gui){
+void TW_CALL defaultNPRVals(void *gui){
 	GUI* g = static_cast<GUI*>(gui);
-	if(g->getControl(0) < 0.5)
-		g->setControl(0,1.0);
-	else
-		g->setControl(0,0.0);
+	g->setGarlicParam(glm::vec4(0.4,0.4,0.2,0.6));
 }
+
+void TW_CALL defaultOutlineValues(void *gui){
+	GUI* g = static_cast<GUI*>(gui);
+	g->setDefaultOutline();
+}
+
+void GUI::setGarlicParam(glm::vec4 gar) {
+		mesh_->garlic_param = gar;
+}
+
 void GUI::assignMesh(Mesh* mesh)
 {
 	mesh_ = mesh;
@@ -166,16 +173,15 @@ void GUI::assignMesh(Mesh* mesh)
 	TwAddVarRW(tBar_, "yellow", TW_TYPE_FLOAT, &(mesh->garlic_param[1]), "min=0.0 max=1.0 step=0.01 group='Shading Parameters' ");
 	TwAddVarRW(tBar_, "alpha", TW_TYPE_FLOAT, &(mesh->garlic_param[2]), "min=0.0 max=1.0 step=0.01 group='Shading Parameters' ");
 	TwAddVarRW(tBar_, "beta", TW_TYPE_FLOAT, &(mesh->garlic_param[3]), "min=0.0 max=1.0 step=0.01 group='Shading Parameters' ");
-	TwAddButton(tBar_, "defaultValues", NULL, NULL, " label='Default Values' group='Shading Parameters' ");
+	TwAddButton(tBar_, "defaultValues", defaultNPRVals, this, " label='Default Values' group='Shading Parameters' ");
 
-	bg_color = glm::vec3(1.0f, 1.0f, 1.0f);
-	outline_color = glm::vec3(0.0f, 0.0f, 0.0f);
+	setDefaultOutline();
 	TwDefine("Main/Outline label='Outline'");
-	// TwAddButton(tBar_, "showOutline", showOutline, this, " label='Show Outline' group='Outline' ");
 	TwAddVarRW(tBar_, "showOutline", TW_TYPE_BOOLCPP, &show_outline, " label='Show outline' group='Outline' ");
 	TwAddVarRW(tBar_, "BGColor", TW_TYPE_COLOR3F, &(bg_color[0]), " label='Background Color' group='Outline' min=0.0 max=1.0 step=0.01");
-	TwAddVarRW(tBar_, "OutlineSize", TW_TYPE_UINT32, &outline_size, " group='Outline' min=1 max=1000 step=1");
+	TwAddVarRW(tBar_, "OutlineSize", TW_TYPE_UINT32, &outline_size, " group='Outline' min=10 max=1500 step=10");
 	TwAddVarRW(tBar_, "OutlineColor", TW_TYPE_COLOR3F, &(outline_color[0]), "label='Outline Color' group='Outline' min=0.0 max=1.0 step=0.01 ");
+	TwAddButton(tBar_, "defaultValues2", defaultOutlineValues, this, " label='Default Values' group='Outline' ");
 }
 
 void GUI::keyCallback(int key, int scancode, int action, int mods)

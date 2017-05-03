@@ -53,6 +53,13 @@ public:
 	bool isNPRcolor() { return show_npr_color; }
 	float getBGColor(int index) { return bg_color[index]; }
 	glm::vec3 getOutlineColor() { return outline_color; }
+	int getOutlineSize() { return outline_size; }
+	void setGarlicParam(glm::vec4 gar);
+	void setDefaultOutline() {
+		bg_color = glm::vec3(1.0f, 1.0f, 1.0f);
+		outline_color = glm::vec3(0.0f, 0.0f, 0.0f);
+		outline_size = 900;
+	}
 private:
 	GLFWwindow* window_;
 	Mesh* mesh_;

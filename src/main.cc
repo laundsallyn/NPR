@@ -423,6 +423,10 @@ int main(int argc, char* argv[])
     CHECK_GL_ERROR(outline_color_location = 
     	glGetUniformLocation(screen_program_id, "outline_color"));
 
+    GLint outline_size_location = 0;
+    CHECK_GL_ERROR(outline_size_location = 
+    	glGetUniformLocation(screen_program_id, "outline_size"));
+
 	//Framebuffers
 	GLuint fbo;
 	glGenFramebuffers(1, &fbo);
@@ -537,6 +541,7 @@ int main(int argc, char* argv[])
 		gui.setControl(0, ((gui.isOutlineShow()) ? 1.0 : 0.0));
 		gui.setControl(1, ((gui.isNPRcolor()) ? 1.0 : 0.0));
 		glm::vec3 oc = gui.getOutlineColor();
+		int my_outline_size = gui.getOutlineSize();
 
 		// Second pass
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -548,6 +553,7 @@ int main(int argc, char* argv[])
 		glUseProgram(screen_program_id);
 		CHECK_GL_ERROR(glUniform3fv(control_location, 1, &control[0]));
 		CHECK_GL_ERROR(glUniform3fv(outline_color_location, 1, &oc[0]));
+		CHECK_GL_ERROR(glUniform1iv(outline_size_location, 1, &my_outline_size));
 
 		glBindVertexArray(quadVAO);
         glBindTexture(GL_TEXTURE_2D, tex_color_buffer);	// Use the color attachment texture as the texture of the quad plane

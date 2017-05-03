@@ -4,10 +4,11 @@ out vec4 color;
 uniform bvec3 control;
 uniform vec3 outline_color;
 uniform sampler2D screenTexture;
-const float offset = 1.0 / 900;
+uniform int outline_size;
 
+float offset = 1.0 / outline_size;
 // const vec4 outline_color = vec4(0.0, 0.0, 0.0, 1.0);
-const float outline_size = 1.0f;
+// const float outline_size = 1.0f;
 const float threshold = 0.999;
 
 void main()
