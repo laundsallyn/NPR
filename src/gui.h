@@ -49,12 +49,16 @@ public:
 	float getControl(int index){
 		return mesh_->control[index];
 	}
+	bool isOutlineShow() { return show_outline; }
+	bool isNPRcolor() { return show_npr_color; }
 private:
 	GLFWwindow* window_;
 	Mesh* mesh_;
 	TwBar* tBar_;
 	int window_width_, window_height_;
 	bool change_garlic_param = false;
+	bool show_outline = false;
+	bool show_npr_color = false;
 	bool drag_state_ = false;
 	bool fps_mode_ = false;
 	bool pose_changed_ = true;

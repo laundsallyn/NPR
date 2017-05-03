@@ -529,6 +529,9 @@ int main(int argc, char* argv[])
 		}
 		last_bone = current_bone;
 
+		gui.setControl(0, ((gui.isOutlineShow()) ? 1.0 : 0.0));
+		gui.setControl(1, ((gui.isNPRcolor()) ? 1.0 : 0.0));
+
 		// Second pass
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);

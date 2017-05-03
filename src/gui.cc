@@ -160,23 +160,24 @@ void GUI::assignMesh(Mesh* mesh)
 
 	// Free vars of NPR shading
 	TwDefine("Main/NPRColor label='Shading Parameters'");
-	TwAddButton(tBar_, "showNPR", NULL, NULL, " label='Show NPR Shading' group='Shading Parameters' ");
+	// TwAddButton(tBar_, "showNPR", NULL, NULL, " label='Show NPR Shading' group='Shading Parameters' ");
+	TwAddVarRW(tBar_, "showNPR", TW_TYPE_BOOLCPP, &show_npr_color, " label='Show NPR Shading' group='Shading Parameters' ");
 	TwAddVarRW(tBar_, "blue", TW_TYPE_FLOAT, &(mesh->garlic_param[0]), "min=0.0 max=1.0 step=0.01 group='Shading Parameters' ");
 	TwAddVarRW(tBar_, "yellow", TW_TYPE_FLOAT, &(mesh->garlic_param[1]), "min=0.0 max=1.0 step=0.01 group='Shading Parameters' ");
 	TwAddVarRW(tBar_, "alpha", TW_TYPE_FLOAT, &(mesh->garlic_param[2]), "min=0.0 max=1.0 step=0.01 group='Shading Parameters' ");
 	TwAddVarRW(tBar_, "beta", TW_TYPE_FLOAT, &(mesh->garlic_param[3]), "min=0.0 max=1.0 step=0.01 group='Shading Parameters' ");
-	// TwAddButton(tBar_, "comment1", NULL, NULL, " label='Life is like a box a chocolates' ");
+	TwAddButton(tBar_, "defaultValues", NULL, NULL, " label='Default Values' group='Shading Parameters' ");
 
 	glm::vec3 test(0,0,0);
 	unsigned int test_two = 900;
 	TwDefine("Main/Outline label='Outline'");
-	TwAddButton(tBar_, "showOutline", showOutline, this, " label='Show Outline' group='Outline' ");
+	// TwAddButton(tBar_, "showOutline", showOutline, this, " label='Show Outline' group='Outline' ");
+	TwAddVarRW(tBar_, "showOutline2", TW_TYPE_BOOLCPP, &show_outline, " label='Show outline 2' group='Outline' ");
 	TwAddVarRW(tBar_, "OutlineColor", TW_TYPE_COLOR3F, &test[0], " group='Outline' ");
 	TwAddVarRW(tBar_, "OutlineSize", TW_TYPE_UINT32, &test_two, " group='Outline' ");
 	// std::cout << glm::to_string(test) << std::endl;
 	glm::vec3 test_three(1,1,1);
 	TwAddVarRW(tBar_, "BGColor", TW_TYPE_COLOR3F, &test_three[0], " label='Background Color' ");
-
 }
 
 void GUI::keyCallback(int key, int scancode, int action, int mods)

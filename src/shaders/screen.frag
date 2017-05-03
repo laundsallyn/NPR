@@ -1,7 +1,7 @@
 R"zzz(#version 330 core
 in vec2 TexCoords;
 out vec4 color;
-uniform vec3 control;
+uniform bvec3 control;
 uniform sampler2D screenTexture;
 const float offset = 1.0 / 900;
 
@@ -11,7 +11,8 @@ const float threshold = 0.999;
 
 void main()
 {
-    bool showOutline = control.x > 0.5;
+    //bool showOutline = control.x > 0.5;
+    bool showOutline = control.x;
     if(!showOutline)
         color = texture(screenTexture, TexCoords);
     else{
