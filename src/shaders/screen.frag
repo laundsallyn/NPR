@@ -13,7 +13,6 @@ const float threshold = 0.999;
 
 void main()
 {
-    //bool showOutline = control.x > 0.5;
     bool showOutline = control.x;
     if(!showOutline)
         color = texture(screenTexture, TexCoords);

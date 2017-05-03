@@ -165,6 +165,7 @@ void GUI::assignMesh(Mesh* mesh)
 	mesh_ = mesh;
 	center_ = mesh_->getCenter();
 
+	TwDefine(" Main size='240 320' fontsize=3 ");
 	// Free vars of NPR shading
 	TwDefine("Main/NPRColor label='Shading Parameters'");
 	// TwAddButton(tBar_, "showNPR", NULL, NULL, " label='Show NPR Shading' group='Shading Parameters' ");
@@ -177,12 +178,12 @@ void GUI::assignMesh(Mesh* mesh)
 
 	setDefaultOutline();
 	TwDefine("Main/Outline label='Outline'");
-	TwAddVarRW(tBar_, "showOutline", TW_TYPE_BOOLCPP, &show_outline, " label='Show outline' group='Outline' ");
-	TwAddVarRW(tBar_, "BGColor", TW_TYPE_COLOR3F, &(bg_color[0]), " label='Background Color' group='Outline' min=0.0 max=1.0 step=0.01");
+	TwAddVarRW(tBar_, "showOutline", TW_TYPE_BOOLCPP, &show_outline, " label='Show Outline' group='Outline' ");
 	TwAddVarRW(tBar_, "OutlineSize", TW_TYPE_UINT32, &outline_size, " group='Outline' min=10 max=1500 step=10");
 	TwAddVarRW(tBar_, "OutlineColor", TW_TYPE_COLOR3F, &(outline_color[0]), "label='Outline Color' group='Outline' min=0.0 max=1.0 step=0.01 ");
 	TwAddButton(tBar_, "defaultValues2", defaultOutlineValues, this, " label='Default Values' group='Outline' ");
 
+	TwAddVarRW(tBar_, "BGColor", TW_TYPE_COLOR3F, &(bg_color[0]), " label='Background Color' min=0.0 max=1.0 step=0.01");
 	TwAddVarRW(tBar_, "showFloor", TW_TYPE_BOOLCPP, &show_floor, " label='Show Floor' ");
 }
 
