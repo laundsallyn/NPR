@@ -60,6 +60,7 @@ public:
 		outline_color = glm::vec3(0.0f, 0.0f, 0.0f);
 		outline_size = 900;
 	}
+	bool showFloor() { return show_floor; }
 private:
 	GLFWwindow* window_;
 	Mesh* mesh_;
@@ -68,6 +69,7 @@ private:
 	bool change_garlic_param = false;
 	bool show_outline = false;
 	bool show_npr_color = false;
+	bool show_floor = true;
 	glm::vec3 bg_color;
 	glm::vec3 outline_color;
 	unsigned int outline_size = 900;

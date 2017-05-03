@@ -182,6 +182,8 @@ void GUI::assignMesh(Mesh* mesh)
 	TwAddVarRW(tBar_, "OutlineSize", TW_TYPE_UINT32, &outline_size, " group='Outline' min=10 max=1500 step=10");
 	TwAddVarRW(tBar_, "OutlineColor", TW_TYPE_COLOR3F, &(outline_color[0]), "label='Outline Color' group='Outline' min=0.0 max=1.0 step=0.01 ");
 	TwAddButton(tBar_, "defaultValues2", defaultOutlineValues, this, " label='Default Values' group='Outline' ");
+
+	TwAddVarRW(tBar_, "showFloor", TW_TYPE_BOOLCPP, &show_floor, " label='Show Floor' ");
 }
 
 void GUI::keyCallback(int key, int scancode, int action, int mods)

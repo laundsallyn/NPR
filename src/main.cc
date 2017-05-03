@@ -360,7 +360,7 @@ int main(int argc, char* argv[])
 	float aspect = 0.0f;
 	std::cout << "center = " << mesh.getCenter() << "\n";
 
-	bool draw_floor = true;
+	bool draw_floor = gui.showFloor();
 	bool draw_skeleton = true;
 	bool draw_object = true;
 	bool draw_cylinder = true;
@@ -542,6 +542,7 @@ int main(int argc, char* argv[])
 		gui.setControl(1, ((gui.isNPRcolor()) ? 1.0 : 0.0));
 		glm::vec3 oc = gui.getOutlineColor();
 		int my_outline_size = gui.getOutlineSize();
+		draw_floor = gui.showFloor();
 
 		// Second pass
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
