@@ -1,0 +1,13 @@
+{
+	"name":"char:ランボルギーニアヴェンタドール:HR-01SuR式",
+	"character":
+		{
+			"height":1.4,
+			"motions":
+				{
+					"stand":"mmo_stop_n.vmd",
+					"walk":"basic_walk.vmd",
+					"run":"mmo_drive_n.vmd"
+				}
+		}
+}
